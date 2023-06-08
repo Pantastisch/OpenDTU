@@ -170,7 +170,7 @@ It is also possible to create a custom environment and compile the source yourse
 -DHOYMILES_PIN_MISO=19
 -DHOYMILES_PIN_MOSI=23
 -DHOYMILES_PIN_SCLK=18
--DHOYMILES_PIN_IRQ=16
+-DHOYMILES_PIN_IRQ=15
 -DHOYMILES_PIN_CE=4
 -DHOYMILES_PIN_CS=5
 ```
