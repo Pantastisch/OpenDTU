@@ -5,6 +5,11 @@
 #include "StatisticsParser.h"
 #include "../Hoymiles.h"
 
+#define HOY_SEMAPHORE_TAKE() \
+    do {                     \
+    } while (xSemaphoreTake(_xSemaphore, portMAX_DELAY) != pdPASS)
+#define HOY_SEMAPHORE_GIVE() xSemaphoreGive(_xSemaphore)
+
 static float calcYieldTotalCh0(StatisticsParser* iv, uint8_t arg0);
 static float calcYieldDayCh0(StatisticsParser* iv, uint8_t arg0);
 static float calcUdcCh(StatisticsParser* iv, uint8_t arg0);
@@ -28,10 +33,30 @@ const calcFunc_t calcFunctions[] = {
     { CALC_IRR_CH, &calcIrradiation }
 };
 
+StatisticsParser::StatisticsParser()
+    : Parser()
+{
+    _xSemaphore = xSemaphoreCreateMutex();
+    HOY_SEMAPHORE_GIVE(); // release before first use
+    clearBuffer();
+}
+
 void StatisticsParser::setByteAssignment(const byteAssign_t* byteAssignment, uint8_t size)
 {
     _byteAssignment = byteAssignment;
     _byteAssignmentSize = size;
+
+    for (uint8_t i = 0; i < _byteAssignmentSize; i++) {
+        if (_byteAssignment[i].div == CMD_CALC) {
+            continue;
+        }
+        _expectedByteCount = max<uint8_t>(_expectedByteCount, _byteAssignment[i].start + _byteAssignment[i].num);
+    }
+}
+
+uint8_t StatisticsParser::getExpectedByteCount()
+{
+    return _expectedByteCount;
 }
 
 void StatisticsParser::clearBuffer()
@@ -48,6 +73,16 @@ void StatisticsParser::appendFragment(uint8_t offset, uint8_t* payload, uint8_t 
     }
     memcpy(&_payloadStatistic[offset], payload, len);
     _statisticLength += len;
+}
+
+void StatisticsParser::beginAppendFragment()
+{
+    HOY_SEMAPHORE_TAKE();
+}
+
+void StatisticsParser::endAppendFragment()
+{
+    HOY_SEMAPHORE_GIVE();
 }
 
 const byteAssign_t* StatisticsParser::getAssignmentByChannelField(ChannelType_t type, ChannelNum_t channel, FieldId_t fieldId)
@@ -86,10 +121,12 @@ float StatisticsParser::getChannelFieldValue(ChannelType_t type, ChannelNum_t ch
     if (CMD_CALC != div) {
         // Value is a static value
         uint32_t val = 0;
+        HOY_SEMAPHORE_TAKE();
         do {
             val <<= 8;
             val |= _payloadStatistic[ptr];
         } while (++ptr != end);
+        HOY_SEMAPHORE_GIVE();
 
         float result;
         if (pos->isSigned && pos->num == 2) {

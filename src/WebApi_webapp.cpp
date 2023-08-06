@@ -6,11 +6,13 @@
 
 extern const uint8_t file_index_html_start[] asm("_binary_webapp_dist_index_html_gz_start");
 extern const uint8_t file_favicon_ico_start[] asm("_binary_webapp_dist_favicon_ico_start");
+extern const uint8_t file_favicon_png_start[] asm("_binary_webapp_dist_favicon_png_start");
 extern const uint8_t file_zones_json_start[] asm("_binary_webapp_dist_zones_json_gz_start");
 extern const uint8_t file_app_js_start[] asm("_binary_webapp_dist_js_app_js_gz_start");
 
 extern const uint8_t file_index_html_end[] asm("_binary_webapp_dist_index_html_gz_end");
 extern const uint8_t file_favicon_ico_end[] asm("_binary_webapp_dist_favicon_ico_end");
+extern const uint8_t file_favicon_png_end[] asm("_binary_webapp_dist_favicon_png_end");
 extern const uint8_t file_zones_json_end[] asm("_binary_webapp_dist_zones_json_gz_end");
 extern const uint8_t file_app_js_end[] asm("_binary_webapp_dist_js_app_js_gz_end");
 
@@ -41,6 +43,11 @@ void WebApiWebappClass::init(AsyncWebServer* server)
         request->send(response);
     });
 
+    _server->on("/favicon.png", HTTP_GET, [](AsyncWebServerRequest* request) {
+        AsyncWebServerResponse* response = request->beginResponse_P(200, "image/png", file_favicon_png_start, file_favicon_png_end - file_favicon_png_start);
+        request->send(response);
+    });
+
     _server->on("/zones.json", HTTP_GET, [](AsyncWebServerRequest* request) {
         AsyncWebServerResponse* response = request->beginResponse_P(200, "application/json", file_zones_json_start, file_zones_json_end - file_zones_json_start);
         response->addHeader("Content-Encoding", "gzip");
@@ -51,7 +58,7 @@ void WebApiWebappClass::init(AsyncWebServer* server)
 #ifdef AUTO_GIT_HASH
         // check client If-None-Match header vs ETag/AUTO_GIT_HASH
         bool eTagMatch = false;
-        if(request->hasHeader("If-None-Match")){
+        if (request->hasHeader("If-None-Match")) {
             AsyncWebHeader* h = request->getHeader("If-None-Match");
             if (strncmp(AUTO_GIT_HASH, h->value().c_str(), strlen(AUTO_GIT_HASH)) == 0) {
                 eTagMatch = true;

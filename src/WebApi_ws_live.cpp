@@ -79,8 +79,10 @@ void WebApiWsLiveClass::loop()
                 _ws.textAll(buffer);
             }
 
-        } catch (std::bad_alloc& bad_alloc) {
+        } catch (const std::bad_alloc& bad_alloc) {
             MessageOutput.printf("Call to /api/livedata/status temporarely out of resources. Reason: \"%s\".\r\n", bad_alloc.what());
+        } catch (const std::exception& exc) {
+            MessageOutput.printf("Unknown exception in /api/livedata/status. Reason: \"%s\".\r\n", exc.what());
         }
 
         _lastWsPublish = millis();
@@ -167,9 +169,7 @@ void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
     JsonObject hintObj = root.createNestedObject("hints");
     struct tm timeinfo;
     hintObj["time_sync"] = !getLocalTime(&timeinfo, 5);
-    hintObj["radio_problem"] =
-        (Hoymiles.getRadioNrf()->isInitialized() && (!Hoymiles.getRadioNrf()->isConnected() || !Hoymiles.getRadioNrf()->isPVariant())) ||
-        (Hoymiles.getRadioCmt()->isInitialized() && (!Hoymiles.getRadioCmt()->isConnected()));
+    hintObj["radio_problem"] = (Hoymiles.getRadioNrf()->isInitialized() && (!Hoymiles.getRadioNrf()->isConnected() || !Hoymiles.getRadioNrf()->isPVariant())) || (Hoymiles.getRadioCmt()->isInitialized() && (!Hoymiles.getRadioCmt()->isConnected()));
     if (!strcmp(Configuration.get().Security_Password, ACCESS_POINT_PASSWORD)) {
         hintObj["default_password"] = true;
     } else {
@@ -229,9 +229,11 @@ void WebApiWsLiveClass::onLivedataStatus(AsyncWebServerRequest* request)
         response->setLength();
         request->send(response);
 
-    } catch (std::bad_alloc& bad_alloc) {
+    } catch (const std::bad_alloc& bad_alloc) {
         MessageOutput.printf("Call to /api/livedata/status temporarely out of resources. Reason: \"%s\".\r\n", bad_alloc.what());
-
+        WebApi.sendTooManyRequests(request);
+    } catch (const std::exception& exc) {
+        MessageOutput.printf("Unknown exception in /api/livedata/status. Reason: \"%s\".\r\n", exc.what());
         WebApi.sendTooManyRequests(request);
     }
 }

@@ -53,6 +53,10 @@ void WebApiPrometheusClass::onPrometheusMetricsGet(AsyncWebServerRequest* reques
         stream->print("# TYPE wifi_rssi gauge\n");
         stream->printf("wifi_rssi %d\n", WiFi.RSSI());
 
+        stream->print("# HELP wifi_station WiFi Station info\n");
+        stream->print("# TYPE wifi_station gauge\n");
+        stream->printf("wifi_station{bssid=\"%s\"} 1\n", WiFi.BSSIDstr().c_str());
+
         for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
             auto inv = Hoymiles.getInverterByPos(i);
 
@@ -139,8 +143,7 @@ void WebApiPrometheusClass::addPanelInfo(AsyncResponseStream* stream, String& se
         idx,
         inv->name(),
         channel,
-        config.Inverter[idx].channel[channel].Name
-    );
+        config.Inverter[idx].channel[channel].Name);
 
     if (printHelp) {
         stream->print("# HELP opendtu_MaxPower panel maximum output power\n");
@@ -151,8 +154,7 @@ void WebApiPrometheusClass::addPanelInfo(AsyncResponseStream* stream, String& se
         idx,
         inv->name(),
         channel,
-        config.Inverter[idx].channel[channel].MaxChannelPower
-    );
+        config.Inverter[idx].channel[channel].MaxChannelPower);
 
     if (printHelp) {
         stream->print("# HELP opendtu_YieldTotalOffset panel yield offset (for used inverters)\n");
@@ -163,6 +165,5 @@ void WebApiPrometheusClass::addPanelInfo(AsyncResponseStream* stream, String& se
         idx,
         inv->name(),
         channel,
-        config.Inverter[idx].channel[channel].YieldTotalOffset
-    );
+        config.Inverter[idx].channel[channel].YieldTotalOffset);
 }

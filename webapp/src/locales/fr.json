@@ -27,8 +27,8 @@
         "Reload": "Reload"
     },
     "localeswitcher": {
-        "Dark": "Dark",
-        "Light": "Light",
+        "Dark": "Sombre",
+        "Light": "Clair",
         "Auto": "Auto"
     },
     "apiresponse": {
@@ -78,6 +78,7 @@
         "8003": "La passerelle n'est pas valide !",
         "8004": "L'adresse IP du serveur DNS primaire n'est pas valide !",
         "8005": "L'adresse IP du serveur DNS secondaire n'est pas valide !",
+        "8006": "La valeur du délai d'attente du point d'accès administratif n'est pas valide !",
         "9001": "Le serveur NTP doit avoir une longueur comprise entre 1 et {max} caractères !",
         "9002": "Le fuseau horaire doit comporter entre 1 et {max} caractères !",
         "9003": "La description du fuseau horaire doit comporter entre 1 et {max} caractères !",
@@ -190,13 +191,13 @@
     },
     "radioinfo": {
         "RadioInformation": "Informations sur la radio",
-        "Status": "{module} Status",
-        "ChipStatus": "{module} sÉtat de la puce",
+        "Status": "{module} Statut",
+        "ChipStatus": "{module} État de la puce",
         "ChipType": "{module} Type de puce",
         "Connected": "connectée",
         "NotConnected": "non connectée",
-        "Configured": "configured",
-        "NotConfigured": "not configured",
+        "Configured": "configurée",
+        "NotConfigured": "non configurée",
         "Unknown": "Inconnue"
     },
     "networkinfo": {
@@ -208,6 +209,7 @@
         "Enabled": "activé",
         "Disabled": "désactivé",
         "Ssid": "SSID",
+        "Bssid": "BSSID",
         "Quality": "Qualité",
         "Rssi": "RSSI"
     },
@@ -244,12 +246,12 @@
         "Synced": "synchronisée",
         "NotSynced": "pas synchronisée",
         "LocalTime": "Heure locale",
-        "Sunrise": "Sunrise",
-        "Sunset": "Sunset",
+        "Sunrise": "Lever du soleil",
+        "Sunset": "Coucher du soleil",
         "NotAvailable": "Not Available",
         "Mode": "Mode",
-        "Day": "Day",
-        "Night": "Night"
+        "Day": "Jour",
+        "Night": "Nuit"
     },
     "mqttinfo": {
         "MqttInformation": "MQTT Information",
@@ -387,6 +389,10 @@
         "Netmask": "Masque de réseau",
         "DefaultGateway": "Passerelle par défaut",
         "Dns": "Serveur DNS {num}",
+        "AdminAp": "Configuration du réseau WiFi (Point d'accès)",
+        "ApTimeout": "Délai d'attente du point d'accès",
+        "ApTimeoutHint": "Durée pendant laquelle le point d'accès reste ouvert. Une valeur de 0 signifie infini.",
+        "Minutes": "minutes",
         "Save": "@:dtuadmin.Save"
     },
     "mqttadmin": {
@@ -447,7 +453,7 @@
         "InverterSerial": "Numéro de série de l'onduleur",
         "InverterName": "Nom de l'onduleur :",
         "InverterNameHint": "Ici, vous pouvez spécifier un nom personnalisé pour votre onduleur.",
-        "InverterStatus": "Receive / Send",
+        "InverterStatus": "Recevoir / Envoyer",
         "PollEnable": "Interroger les données de l'onduleur",
         "PollEnableNight": "Interroger les données de l'onduleur la nuit",
         "CommandEnable": "Envoyer des commandes",
@@ -526,6 +532,7 @@
     },
     "deviceadmin": {
         "DeviceManager": "Gestionnaire de périphériques",
+        "ParseError": "Erreur d'analyse dans 'pin_mapping.json': {error}",
         "PinAssignment": "Paramètres de connexion",
         "SelectedProfile": "Profil sélectionné",
         "DefaultProfile": "(Réglages par défaut)",
@@ -537,10 +544,10 @@
         "ScreensaverHint": "Déplacez un peu l'écran à chaque mise à jour pour éviter le phénomène de brûlure. (Utile surtout pour les écrans OLED)",
         "Contrast": "Contraste ({contrast}):",
         "Rotation": "Rotation:",
-        "rot0": "No rotation",
-        "rot90": "90 degree rotation",
-        "rot180": "180 degree rotation",
-        "rot270": "270 degree rotation",
+        "rot0": "Pas de rotation",
+        "rot90": "Rotation de 90 degrés",
+        "rot180": "Rotation de 180 degrés",
+        "rot270": "Rotation de 270 degrés",
         "DisplayLanguage": "Langue d'affichage",
         "en": "Anglais",
         "de": "Allemand",
